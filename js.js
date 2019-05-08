@@ -8,10 +8,22 @@ let squareW = canvas.width / gridSize;
 
 let gameGrid = [];
 
-let long = [{x: 5, y: 7}, {x: 5, y: 5}, {x: 5, y: 6}, {x: 5, y: 8}];
+let long = [{x: 5, y: 7}, {x: 5, y: 5}, {x: 5, y: 6}, {x: 6, y: 7}];
 
 let curBlock = long;
 
+ctx.fillStyle = '#ff0000';
+
+function buildGrid(){
+	for(i = 0; i < gridSize; i++){
+		gameGrid.push([]);
+		for(j = 0; j < gridSize; j++){
+			gameGrid[i].push(0);
+		}
+	}
+}
+
+buildGrid();
 
 function drawGrid(){
 	ctx.strokeStyle = '0x000000';
@@ -25,34 +37,13 @@ function drawGrid(){
 	ctx.stroke();
 }
 
-//function makeBlock(){
-//	addSquare(20, 20);
-//	addSquare(20, 21);
-//}
-
-function addSquare(x, y){
-	//block.push({
-	//	x: x,
-	//	y: y
-	//});
-}
-
-//makeBlock();
-
-ctx.fillStyle = '#ff0000';
-long.forEach(function(block){
-	ctx.fillRect(squareW*block.x, squareH*block.y, squareW, squareH);
-});
-
 document.addEventListener('keydown', function(){
 	rotate(curBlock);
 });
 
-drawGrid();
-
 function rotate(cur){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	drawGrid();
+	//drawGrid();
 	let affMat = [0,-1,
 				  1, 0];
 	for(i = 1; i < cur.length; i ++){
@@ -65,6 +56,14 @@ function rotate(cur){
 	drawCurrentBlock(long);
 }
 
+function addShape(cur){
+	console.log(gameGrid);
+	cur.forEach(function(block){
+		gameGrid[block.y][block.x] = 1;
+	});
+	drawCurrentBlock(cur);
+}
+
 function drawCurrentBlock(cur){
 	cur.forEach(function(block){
 		ctx.fillRect(squareW*block.x, squareH*block.y, squareW, squareH);
@@ -73,10 +72,16 @@ function drawCurrentBlock(cur){
 
 function gameLoop(){
 	long.forEach(function(block){
+		gameGrid[block.y][block.x] = 0
 		block.y += 1;
+		gameGrid[block.y][block.x] = 1
 	});
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//drawGrid();
 	drawCurrentBlock(long);
-
+	console.log(gameGrid);
 }
+
+addShape(long);
 
 let gameInterval = setInterval(gameLoop, 1000);
