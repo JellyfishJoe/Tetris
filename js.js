@@ -8,9 +8,16 @@ let squareW = canvas.width / gridSize;
 
 let gameGrid = [];
 
-let long = [{x: 5, y: 7}, {x: 5, y: 5}, {x: 5, y: 6}, {x: 6, y: 7}];
+let rightl = [{x: 5, y: 7, free: true}, {x: 6, y: 7, free: true}, {x: 5, y: 6, free: false}, {x: 5, y: 5, free: false}];
+let leftl = [];
+let square = [];
+let rightz = [];
+let leftz = [];
+let line = [];
 
-let curBlock = long;
+let shapes = [rightl, leftl, square, rightz, leftz, line]
+
+let curBlock = shapes[0];
 
 ctx.fillStyle = '#ff0000';
 
@@ -37,9 +44,29 @@ function drawGrid(){
 	ctx.stroke();
 }
 
-document.addEventListener('keydown', function(){
-	rotate(curBlock);
+document.addEventListener('keydown', function(event){
+	switch(event.keyCode){
+		case 87:
+			rotate(curBlock);
+			break;
+		case 32:
+			gameLoop();
+			break;
+		case 65:
+			slideCur(-1);
+			break;
+		case 68:
+			slideCur(1);
+			break;
+		case 81:
+			chooseShape();
+			break;
+	}
 });
+
+function slideCur(dir){
+
+}
 
 function rotate(cur){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -47,13 +74,50 @@ function rotate(cur){
 	let affMat = [0,-1,
 				  1, 0];
 	for(i = 1; i < cur.length; i ++){
+		gameGrid[cur[i].y][cur[i].x] = 0;
 		x = cur[i].x - cur[0].x;
 		y = cur[i].y - cur[0].y;
 		cur[i].x = x*affMat[0] + y*affMat[1] + cur[0].x;
 		cur[i].y = x*affMat[2] + y*affMat[3] + cur[0].y;
+		gameGrid[cur[i].y][cur[i].x] = 1;
 	}
 	ctx.fillStyle = 'red';
-	drawCurrentBlock(long);
+	drawCurrentBlock(curBlock);
+	console.log(gameGrid);
+	freenessUpdate(cur);
+}
+
+function freenessUpdate(cur){
+	for(i = 0; i < cur.length; i++){
+		for(j = 0; j < cur.length; j++){
+			if(cur[i].x = cur[j].x && cur[i].y + 1 == cur[j].y){
+				cur[i].free = false;
+			} else{
+				cur[i].free = true;
+			}
+		}
+	}
+}
+
+function collisionCheck(cur){
+	console.log('check');
+	for(i = 0; i < cur.length; i++){
+		if(cur[i].free == true){
+			console.log('true');
+			console.log(gameGrid[cur[i].y + 1][cur[i].x] == 1);
+			console.log(gameGrid[cur[i].y + 1][cur[i].x] > gridSize);
+			if(cur[i].y + 1 > gridSize || gameGrid[cur[i].y + 1][cur[i].x] == 1){
+				console.log('blocked');
+				return true;
+			} else{
+				return false;
+			}
+		}
+	}
+}
+
+function chooseShape(){
+	let rand = Math.floor(Math.random*5);
 }
 
 function addShape(cur){
@@ -71,17 +135,24 @@ function drawCurrentBlock(cur){
 }
 
 function gameLoop(){
-	long.forEach(function(block){
-		gameGrid[block.y][block.x] = 0
-		block.y += 1;
-		gameGrid[block.y][block.x] = 1
-	});
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	//drawGrid();
-	drawCurrentBlock(long);
-	console.log(gameGrid);
+	console.log('game run');
+	if(!collisionCheck(curBlock)){
+		curBlock.forEach(function(block){
+			gameGrid[block.y][block.x] = 0
+		});
+		curBlock.forEach(function(block){
+			block.y += 1;
+			gameGrid[block.y][block.x] = 1
+		});
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		//drawGrid();
+		drawCurrentBlock(curBlock);
+		console.log(gameGrid);
+	} else{
+		console.log('stop');
+	}
 }
 
-addShape(long);
+addShape(curBlock);
 
-let gameInterval = setInterval(gameLoop, 1000);
+//let gameInterval = setInterval(gameLoop, 1000);
