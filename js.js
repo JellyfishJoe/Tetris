@@ -169,6 +169,8 @@ function gameLoop(){
 	}
 }
 
-//drawCurrentBlock(curBlock);
+//chooseShape();
 
-let gameInterval = setInterval(gameLoop, 1000);
+drawCurrentBlock(curBlock);
+
+//let gameInterval = setInterval(gameLoop, 1000);
