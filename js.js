@@ -16,7 +16,9 @@ let leftz = [{x: 9, y: 7}, {x: 8, y: 6}, {x: 9, y: 6}, {x: 10, y: 7}];
 let line = [{x: 9, y: 7}, {x: 9, y: 5}, {x: 9, y: 6}, {x: 9, y: 8}];
 let tee = [{x: 9, y: 7}, {x: 8, y: 7}, {x: 10, y: 7}, {x: 9, y: 8}];
 let shapes = [rightl, leftl, square, rightz, leftz, line, tee];
+
 let curBlock = shapes[2];
+
 let index = shapes.indexOf(curBlock);
 console.log(index);
 
@@ -123,6 +125,8 @@ function freenessUpdate(cur){
 
 function collisionCheck(cur, mx, my){
 	for(i = 0; i < cur.length; i++){
+		console.log("cur[i]: " + cur[i].y);
+		console.log(gridSize);
 		if(cur[i].y + my < gridSize && cur[i].x + mx < gridSize && cur[i].x + mx > 0){
 			//console.log(gameGrid[cur[i].y + 1][cur[i].x] == 1);
 			//console.log(gameGrid[cur[i].y + 1][cur[i].x] > gridSize);
@@ -139,7 +143,7 @@ function collisionCheck(cur, mx, my){
 }
 
 function blockStay(){
-	zz
+	
 }
 
 function chooseShape(){
@@ -158,12 +162,13 @@ function drawCurrentBlock(cur){
 
 function gameLoop(){
 	if(!collisionCheck(curBlock, 0, 1)){
+		console.log(!collisionCheck(curBlock, 0, 1));
 		curBlock.forEach(function(block){
 			block.y += 1;
 		});
 		//drawGrid();
 		drawCurrentBlock(curBlock);
-		console.log(gameGrid);
+		//console.log(gameGrid);
 	} else{
 		console.log('stop');
 	}
